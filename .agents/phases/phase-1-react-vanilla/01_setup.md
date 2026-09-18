@@ -47,6 +47,8 @@ Routes yang dibutuhkan:
 ```
 /              → Dashboard (semua catatan)
 /folder/:id   → Catatan dalam folder tertentu
+/tag/:id        → Catatan dalam tag tertentu
+/category/:id   → Catatan dalam category tertentu
 /note/:id     → Detail/edit catatan
 ```
 
