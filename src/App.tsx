@@ -5,6 +5,8 @@ import AppLayout from "./components/layout/AppLayout";
 import FolderPage from "./pages/FolderPage";
 import NotePage from "./pages/NotePage";
 import HomePage from "./pages/HomePage";
+import TagPage from "./pages/TagPage";
+import CategoryPage from "./pages/CategoryPage";
 
 function RouteApp() {
   return (
@@ -13,6 +15,8 @@ function RouteApp() {
         <Route path="/" element={<HomePage />} />
         <Route path="/folder/:id" element={<FolderPage />} />
         <Route path="/note/:id" element={<NotePage />} />
+        <Route path="/tag/:id" element={<TagPage />} />
+        <Route path="/category/:id" element={<CategoryPage />} />
       </Route>
     </Routes>
   )
