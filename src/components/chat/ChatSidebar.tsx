@@ -1,3 +1,7 @@
 export default function ChatSidebar() {
-  return <div>ChatSidebar</div>;
+  return (
+    <div className="flex h-full flex-col">
+      
+    </div>
+  )
 }
