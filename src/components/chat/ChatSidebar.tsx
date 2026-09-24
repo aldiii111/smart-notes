@@ -1,7 +1,9 @@
+import { Sidebar } from "../ui/sidebar"
+
 export default function ChatSidebar() {
-  return (
-    <div className="flex h-full flex-col">
-      
-    </div>
-  )
+    return (
+        <Sidebar variant="inset">
+            
+        </Sidebar>
+    )
 }
