@@ -1,20 +1,24 @@
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
+import { useSidebar } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { PanelRightIcon } from "lucide-react"
+import { PanelLeftIcon, PanelRightIcon } from "lucide-react"
 
-export default function Header({ onClick }: React.ComponentProps<typeof Button>) {
-    const { onToggleRight } = useSidebar()
+interface HeaderProps {
+  toggleLeft: () => void
+}
 
-    return (
-        <header className="flex items-center justify-between p-2">
-            <SidebarTrigger />
-            <Button variant="ghost" size="icon-sm" onClick={(event) => {
-                onClick?.(event)
-                onToggleRight()
-            }}>
-                <PanelRightIcon />
-                <span className="sr-only">Toggle Chat</span>
-            </Button>
-        </header>
-    )
+export default function Header({ toggleLeft }: HeaderProps) {
+  const { toggleSidebar: toggleRight } = useSidebar()
+
+  return (
+    <header className="flex items-center justify-between p-2">
+      <Button variant="ghost" size="icon-sm" onClick={toggleLeft}>
+        <PanelLeftIcon />
+        <span className="sr-only">Toggle Sidebar</span>
+      </Button>
+      <Button variant="ghost" size="icon-sm" onClick={toggleRight}>
+        <PanelRightIcon />
+        <span className="sr-only">Toggle Chat</span>
+      </Button>
+    </header>
+  )
 }

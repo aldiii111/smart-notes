@@ -1,9 +1,8 @@
-import { Sidebar } from "../ui/sidebar"
+import { Sidebar } from "@/components/ui/sidebar"
 
 export default function ChatSidebar() {
-    return (
-        <Sidebar variant="inset">
-            
-        </Sidebar>
-    )
+  return (
+    <Sidebar side="right" variant="inset">
+    </Sidebar>
+  )
 }
