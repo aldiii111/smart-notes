@@ -12,8 +12,12 @@ function InnerLayout() {
   const { toggleSidebar: toggleLeft } = useSidebar()
 
   return (
-    <SidebarProvider defaultOpen={false} className="flex-1 min-h-0 m-2">
-      <SidebarInset className="md:rounded-xl">
+    <SidebarProvider
+     defaultOpen={false}
+     className="flex-1"
+     style={{ minHeight: 0 }}
+     >
+      <SidebarInset className="md:rounded-xl m-2">
         <Header toggleLeft={toggleLeft} />
         <Outlet />
       </SidebarInset>
