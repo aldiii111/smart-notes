@@ -1,7 +1,73 @@
-jika saya pilih yang a, saya akan merancang nya kira kira seperti ini:
+# 🏗️ Arsitektur UI/UX & Data Flow (Revisi)
 
-[FolderPage.tsx](file;file:///home/aldiii/Documents/learning/project/notes-app/src/pages/FolderPage.tsx) [CategoryPage.tsx](file;file:///home/aldiii/Documents/learning/project/notes-app/src/pages/CategoryPage.tsx) [HomePage.tsx](file;file:///home/aldiii/Documents/learning/project/notes-app/src/pages/HomePage.tsx) [TagPage.tsx](file;file:///home/aldiii/Documents/learning/project/notes-app/src/pages/TagPage.tsx) mereka semua hanya merender notelist, yang didalam nya ada notecard, lalu jika notecard nya di pencet dia masuk ke notes/:id yang fokus ke-ibaratnya noteviewnya lah, yang nanti ada menu editor, yang rencana dibikin popup, lalu kembali ke keempat page tadi di bagian atas yang untuk + new form, juga dibikin popup, jadi kamu pahami dulu rancangan yang ini, lalu jelaskan ke saya alur context nya bagaimana,
+Dokumen ini adalah patokan arsitektur untuk Fase 1 berdasarkan hasil revisi rancangan (Meniadakan UI redundant, menggunakan Context untuk reaktivitas, dan Popup/Dialog logic).
 
-jika rencana saya buat [useFolders.ts](file;file:///home/aldiii/Documents/learning/project/notes-app/src/hooks/useFolders.ts) [useNotes.ts](file;file:///home/aldiii/Documents/learning/project/notes-app/src/hooks/useNotes.ts) [useTags.ts](file;file:///home/aldiii/Documents/learning/project/notes-app/src/hooks/useTags.ts) [useCategories.ts](file;file:///home/aldiii/Documents/learning/project/notes-app/src/hooks/useCategories.ts) hanya sebagai fungsi pemanggil data dari sumbernya di[useLocalStorage.ts](file;file:///home/aldiii/Documents/learning/project/notes-app/src/hooks/useLocalStorage.ts), dan mem filtered sesuai dgn nama file mereka,
+## 1. Struktur Routing & Navigasi (App.tsx)
 
-berikan pendaatmu, dan carilah bagian yang kurang dari rancangan saya ini
+Pendekatan rute langsung (Direct Routing) tanpa halaman *list* penengah. Navigasi utama dikendalikan oleh **Sidebar**.
+
+*   **`/` (HomePage):** Merender semua `NoteCard`.
+*   **`/folders/:id` (FolderPage):** Merender `NoteCard` yang difilter berdasarkan Folder ID.
+*   **`/tags/:id` (TagPage):** Merender `NoteCard` yang difilter berdasarkan Tag ID.
+*   **`/categories/:id` (CategoryPage):** Merender `NoteCard` yang difilter berdasarkan Category ID.
+*   **`/notes/:id` (NotePage):** Merender detail catatan spesifik (*Read-only view*).
+
+> **Catatan UI:** `MainSidebar` akan menampilkan *scrollable list / dropdown* untuk Folders, Tags, dan Categories. Mengklik item di sidebar langsung men-trigger navigasi ke rute `/:id` di atas. (Folder `src/components/filter` **dihapus** karena filter terjadi secara natural via URL Parameter).
+
+## 2. Alur Interaksi Komponen (User Journey)
+
+### A. Melihat Daftar Catatan
+Komponen `HomePage`, `FolderPage`, `TagPage`, dan `CategoryPage` memiliki struktur identik:
+1. Mengambil parameter ID dari URL (jika ada).
+2. Memanggil data yang **sudah difilter** dari Hooks.
+3. Mengoper data tersebut ke komponen `<NoteList />` yang akan merender `<NoteCard />` berulang kali.
+
+### B. Membaca & Mengedit Catatan (NotePage)
+1. User mengklik `<NoteCard />` -> Navigasi ke `/notes/:id`.
+2. `<NotePage />` merender isi catatan (Judul, Konten, Metadata) secara biasa (teks statis/read-only).
+3. Terdapat tombol **"Edit"**.
+4. Mengklik "Edit" membuka **Popup/Dialog** berisi `<NoteForm />` yang sudah di-*populate* (terisi) dengan data catatan tersebut.
+5. Saat di-save: Popup menutup -> Data di Context terupdate -> UI `NotePage` otomatis merender ulang data terbaru.
+
+### C. Membuat Catatan Baru (Contextual `+ New Note`)
+Tombol `+ New Note` diletakkan di UI global (misal: di Header/Navbar atas agar selalu terlihat).
+Tombol ini memicu **Popup/Dialog `<NoteForm />`** kosong, dengan fitur cerdas (Smart Defaults):
+*   Jika ditekan saat di `/` -> Dropdown folder/tag di form kosong.
+*   Jika ditekan saat di `/folders/work` -> Dropdown folder di form **otomatis terpilih** "Work".
+
+## 3. Alur Data & Reaktivitas (Context Pipeline)
+
+Untuk mencegah UI yang *stale* (tidak update saat LocalStorage berubah), kita menggunakan **Context API** sebagai *Single Source of Truth*.
+
+**Alur Pipa Data (Bottom-Up):**
+
+1. **`useLocalStorage` (Storage Layer)**
+   *Tugas:* Murni melakukan `localStorage.getItem` dan `localStorage.setItem`. Tidak menyimpan state React.
+   
+2. **`NotesContext` (State Management Layer)**
+   *Tugas:* 
+   - Saat aplikasi dimuat (mount), ambil data dari `useLocalStorage` dan simpan ke dalam `useState` (React State).
+   - Menyediakan fungsi mutasi (seperti `addNote`, `updateNote`).
+   - *Logic mutasi:* Update React State terlebih dahulu, **lalu** panggil `useLocalStorage` untuk persistensi (menyimpan permanen).
+   
+3. **`useNotes`, `useFolders`, dll (Entity Hooks / Business Logic Layer)**
+   *Tugas:* 
+   - Hook ini *mengonsumsi* (consume) data dari `NotesContext`, BUKAN memanggil local storage secara langsung.
+   - Menyediakan fungsi spesifik (seperti `getNotesByFolderId(id)`).
+   
+4. **Pages / Components (UI Layer)**
+   *Tugas:* Memanggil Entity Hooks untuk mendapatkan data reaktif, dan memberikan aksi (seperti submit form) kembali ke Hooks.
+
+### (Hint) Contoh Alur di Context:
+```tsx
+// Di dalam NotesContext.tsx (HINT ONLY)
+const [notes, setNotes] = useState(initialNotesFromLocalStorage);
+
+const updateNote = (updatedData) => {
+   // 1. Update React State agar UI reaktif
+   const newNotes = notes.map(n => n.id === updatedData.id ? updatedData : n);
+   setNotes(newNotes);
+   // 2. Simpan ke LocalStorage via fungsi helper
+   saveToLocalStorage(newNotes); 
+};
+```

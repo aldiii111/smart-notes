@@ -14,12 +14,8 @@ function RouteApp() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
 
-        <Route path="/folders" element={<FolderPage />} />
-        <Route path="/notes/:id" element={<NotePage />} />
-        <Route path="/tags" element={<TagPage />} />
-        <Route path="/categories" element={<CategoryPage />} />
-
         <Route path="/folders/:id" element={<FolderPage />} />
+        <Route path="/notes/:id" element={<NotePage />} />
         <Route path="/tags/:id" element={<TagPage />} />
         <Route path="/categories/:id" element={<CategoryPage />} />
       </Route>
