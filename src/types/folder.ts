@@ -6,3 +6,5 @@ export interface Folder {
 }
 
 export type CreateFolderInput = Omit<Folder, 'id' | 'createdAt'>;
+
+export type UpdateFolderInput = Partial<CreateFolderInput>;

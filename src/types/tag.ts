@@ -6,3 +6,5 @@ export interface Tag {
 }
 
 export type CreateTagInput = Omit<Tag, 'id' | 'createdAt'>;
+
+export type UpdateTagInput = Partial<CreateTagInput>;

@@ -5,7 +5,7 @@ export interface Note {
   folderId: string | null;
   categoryId: string | null;
   tagIds: string[];
-  isPinned: boolean;
+  isPinned?: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -6,3 +6,5 @@ export interface Category {
 }
 
 export type CreateCategoryInput = Omit<Category, 'id' | 'createdAt'>;
+
+export type UpdateCategoryInput = Partial<CreateCategoryInput>;
