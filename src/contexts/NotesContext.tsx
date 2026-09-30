@@ -101,8 +101,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
                     ...n,
                     ...data,
                     createdAt: new Date().toISOString()
-                } : n
-            )
+                } : n)
             saveFolders(updated)
             return updated
         })
@@ -112,15 +111,143 @@ export function NotesProvider({ children }: { children: ReactNode }) {
         setFolder((prev) => {
             const deleted = prev.filter((n) => n.id !== id)
             saveFolders(deleted)
-            setNote((prev) => {
-                const deleted = prev.map((n) => n.id === id ? {
-                    ...n,
-                    folderId: null
-                } : n)
-                saveNotes(deleted)
-                return deleted
-            })
             return deleted
         })
+
+        setNote((prev) => {
+            const updated = prev.map((n) => n.folderId === id ? {
+                ...n,
+                folderId: null
+            } : n)
+            saveNotes(updated)
+            return updated
+        })
     }, [])
+
+    const addCategory = useCallback((data: CreateCategoryInput) => {
+        const newCategory: Category = {
+            ...data,
+            id: crypto.randomUUID(),
+            createdAt: new Date().toISOString()
+        }
+        setCategory((prev) => {
+            const updated = [newCategory, ...prev]
+            saveCategories(updated)
+            return updated
+        })
+    }, [])
+
+    const updateCategory = useCallback((id: string, data: UpdateCategoryInput) => {
+        setCategory((prev) => {
+            const updated = prev.map((n) =>
+                n.id === id ? {
+                    ...n,
+                    ...data,
+                    createdAt: new Date().toISOString()
+                } : n)
+            saveCategories(updated)
+            return updated
+        })
+    }, [])
+
+    const deleteCategory = useCallback((id: string) => {
+        setCategory((prev) => {
+            const deleted = prev.filter((n) => n.id !== id)
+            saveCategories(deleted)
+            return deleted
+        })
+
+        setNote((prev) => {
+            const updated = prev.map((n) => n.categoryId === id ? {
+                ...n,
+                categoryId: null
+            } : n)
+            saveNotes(updated)
+            return updated
+        })
+    }, [])
+
+    const addTag = useCallback((data: CreateTagInput) => {
+        const newTag: Tag = {
+            ...data,
+            id: crypto.randomUUID(),
+            createdAt: new Date().toISOString()
+        }
+        setTag((prev) => {
+            const updated = [newTag, ...prev]
+            saveTags(updated)
+            return updated
+        })
+    }, [])
+
+    const updateTag = useCallback((id: string, data: UpdateTagInput) => {
+        setTag((prev) => {
+            const updated = prev.map((n) => n.id === id ? {
+                ...n,
+                ...data,
+                createdAt: new Date().toISOString()
+            } : n)
+            saveTags(updated)
+            return updated
+        })
+    }, [])
+
+    const deleteTag = useCallback((id: string) => {
+        setTag((prev) => {
+            const deleted = prev.filter((n) => n.id !== id)
+            saveTags(deleted)
+            return deleted
+        })
+
+        setNote((prev) => {
+            const updated = prev.map((n) => ({
+                ...n,
+                tagIds: n.tagIds.filter(tagIds => tagIds !== id)
+            }))
+            saveNotes(updated)
+            return updated
+        })
+    }, [])
+
+    const contextValue = useMemo<NotesContextType>(
+        () => ({
+            notes: note,
+            folders: folder,
+            categories: category,
+            tags: tag,
+            addNote,
+            updateNote,
+            deleteNote,
+            addFolder,
+            updateFolder,
+            deleteFolder,
+            addCategory,
+            updateCategory,
+            deleteCategory,
+            addTag,
+            updateTag,
+            deleteTag,
+        }),
+        [
+            note, folder, category, tag,
+            addNote, updateNote, deleteNote,
+            addFolder, updateFolder, deleteFolder,
+            addCategory, updateCategory, deleteCategory,
+            addTag, updateTag, deleteTag
+        ]
+    )
+
+    return (
+        <NotesContext.Provider value={contextValue}>
+        { children }
+        </NotesContext.Provider>
+    )
+}
+
+export function useNotesProvider() {
+    const context = useContext(NotesContext)
+    if (!context) {
+        throw new Error("useNotesProvider must be used within NotesSidebar")
+    }
+    return context;
 }
