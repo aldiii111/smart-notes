@@ -61,7 +61,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 
     const updateNote = useCallback((id: string, data: UpdateNoteInput) => {
         setNote((prev) => {
-            const updated = prev.map((n) => 
+            const updated = prev.map((n) =>
                 n.id === id ? {
                     ...n,
                     ...data,
@@ -96,7 +96,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 
     const updateFolder = useCallback((id: string, data: UpdateFolderInput) => {
         setFolder((prev) => {
-            const updated = prev.map((n) => 
+            const updated = prev.map((n) =>
                 n.id === id ? {
                     ...n,
                     ...data,
@@ -105,6 +105,22 @@ export function NotesProvider({ children }: { children: ReactNode }) {
             )
             saveFolders(updated)
             return updated
+        })
+    }, [])
+
+    const deleteFolder = useCallback((id: string) => {
+        setFolder((prev) => {
+            const deleted = prev.filter((n) => n.id !== id)
+            saveFolders(deleted)
+            setNote((prev) => {
+                const deleted = prev.map((n) => n.id === id ? {
+                    ...n,
+                    folderId: null
+                } : n)
+                saveNotes(deleted)
+                return deleted
+            })
+            return deleted
         })
     }, [])
 }
