@@ -7,6 +7,7 @@ import NotePage from "./pages/NotePage";
 import HomePage from "./pages/HomePage";
 import TagPage from "./pages/TagPage";
 import CategoryPage from "./pages/CategoryPage";
+import { NotesProvider } from './contexts/NotesContext';
 
 function RouteApp() {
   return (
@@ -27,7 +28,9 @@ function App() {
   return (
     <Router>
       <TooltipProvider>
-        <RouteApp />
+        <NotesProvider>
+          <RouteApp />
+        </NotesProvider>
       </TooltipProvider>
     </Router>
   )

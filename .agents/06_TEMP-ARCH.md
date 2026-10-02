@@ -12,7 +12,7 @@ Pendekatan rute langsung (Direct Routing) tanpa halaman *list* penengah. Navigas
 *   **`/categories/:id` (CategoryPage):** Merender `NoteCard` yang difilter berdasarkan Category ID.
 *   **`/notes/:id` (NotePage):** Merender detail catatan spesifik (*Read-only view*).
 
-> **Catatan UI:** `MainSidebar` akan menampilkan *scrollable list / dropdown* untuk Folders, Tags, dan Categories. Mengklik item di sidebar langsung men-trigger navigasi ke rute `/:id` di atas. (Folder `src/components/filter` **dihapus** karena filter terjadi secara natural via URL Parameter).
+> **Catatan UI:** `MainSidebar` akan menampilkan *scrollable list / dropdown* untuk Folders, Tags, dan Categories. Mengklik item di sidebar langsung men-trigger navigasi dropdown scrollable yang nge map seluruh isi folder, dan isi tag, category nya masing masing ketiga tombol, yang mana jika di klik salah satu isi dari mapingan yang scrolable tersebut akan ke rute `/:id` di atas. (Folder `src/components/filter` **dihapus** karena filter terjadi secara natural via URL Parameter).
 
 ## 2. Alur Interaksi Komponen (User Journey)
 

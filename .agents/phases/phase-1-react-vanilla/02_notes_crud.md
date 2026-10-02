@@ -83,9 +83,9 @@ contexts/
 
 ## Checklist
 
-- [ ] `useLocalStorage` hook berfungsi (generic, reusable)
-- [ ] Notes CRUD lengkap (create, read, update, delete)
-- [ ] Pin/unpin berfungsi
+- [ok] `useLocalStorage` hook berfungsi (generic, reusable)
+- [ok] Notes CRUD lengkap (create, read, update, delete)
+<!-- - [ ] Pin/unpin berfungsi -->
 - [ ] Folder CRUD + assign note ke folder
 - [ ] Category CRUD + assign note ke category
 - [ ] Tag CRUD + assign tag ke note (many-to-many)
@@ -94,4 +94,4 @@ contexts/
 - [ ] Empty state tampil saat tidak ada catatan
 - [ ] Konfirmasi hapus via AlertDialog
 - [ ] Toast notification setelah setiap aksi CRUD
-- [ ] Responsive layout berfungsi
+- [ok] Responsive layout berfungsi
