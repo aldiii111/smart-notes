@@ -35,42 +35,42 @@
 
 ---
 
-## Data Flow
+## Data Flow (3-Layer Architecture)
 
 ```
-User Action → Event Handler → LocalStorage Write → State Update → Re-render
-                                                          ↑
-                                                   useLocalStorage hook
-                                                   (sync state ↔ storage)
+User Action → Component/Form → Custom Hook (with Toast UX) → NotesContext (State & Integrity) → LocalStorage
+                                                                    │
+                                                           Re-render Reaktif
 ```
 
-## Komponen yang Dibangun
+Spesifikasi lengkap fungsi dan aturan pembagian tugas masing-masing Custom Hook terlampir di **[note.md](file:///home/aldiii/Documents/learning/project/notes-app/.agents/note.md)**.
+
+## Komponen & Hooks yang Dibangun
 
 ```
 components/notes/
 ├── NoteCard.tsx          # Kartu catatan di grid (title, preview, tags, date)
 ├── NoteList.tsx          # Grid container untuk NoteCard
 ├── NoteEditor.tsx        # Expanded view untuk baca/edit catatan
-├── NoteForm.tsx          # Form di dalam Dialog untuk create/edit
+├── NoteForm.tsx          # Form di dalam Dialog untuk create/edit (+ Assign Folder, Category, Tags)
 └── NoteEmptyState.tsx    # State ketika tidak ada catatan
 
 components/layout/
 ├── AppLayout.tsx         # Layout 3-panel utama
-├── AppSidebar.tsx        # Sidebar kiri (folders, tags, categories)
+├── MainSidebar.tsx       # Sidebar kiri (folders, tags, categories)
 ├── AppHeader.tsx         # Header dengan search, tombol new note, toggle AI
 └── SearchBar.tsx         # Input search dengan filter logic
 
 hooks/
-├── useNotes.ts           # CRUD operations untuk notes
-├── useFolders.ts         # CRUD operations untuk folders
-├── useCategories.ts      # CRUD operations untuk categories
-├── useTags.ts            # CRUD operations untuk tags
-├── useLocalStorage.ts    # Generic hook: sync state ↔ localStorage
-└── useSearch.ts          # Search & filter logic
+├── useNotes.ts           # Wrapper CRUD notes + Toast + Hydrated Note helper
+├── useFolders.ts         # Wrapper CRUD folders + Toast + noteCount
+├── useCategories.ts      # Wrapper CRUD categories + Toast + noteCount
+├── useTags.ts            # Wrapper CRUD tags + Toast + noteCount
+├── useLocalStorage.ts    # Generic helper: murni read/write LocalStorage
+└── useSearch.ts          # Search keyword & Route filter + Pinned sorting logic
 
 contexts/
-├── NotesContext.tsx       # Shared state: notes, folders, tags, categories
-└── FilterContext.tsx      # Active folder/tag/category filter
+└── NotesContext.tsx      # Shared state master (Single Source of Truth) & Relational Integrity
 ```
 
 ## Aturan Khusus Fase 1
