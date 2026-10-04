@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import TagPage from "./pages/TagPage";
 import CategoryPage from "./pages/CategoryPage";
 import { NotesProvider } from './contexts/NotesContext';
+import { Toaster } from './components/ui/sonner';
 
 function RouteApp() {
   return (
@@ -30,6 +31,7 @@ function App() {
       <TooltipProvider>
         <NotesProvider>
           <RouteApp />
+          <Toaster />
         </NotesProvider>
       </TooltipProvider>
     </Router>

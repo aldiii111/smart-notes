@@ -9,11 +9,10 @@
 
 | Operasi | Detail |
 |---------|--------|
-| **Create** | Buat catatan baru via Dialog form (title + content + folder + category + tags) |
-| **Read** | Tampilkan semua catatan sebagai grid kartu, klik untuk expand |
-| **Update** | Edit catatan inline di expanded view, perubahan disimpan ke LocalStorage |
+| **Create** | Buat catatan baru via Dialog `<NoteForm />` (title + content + folder + category + tags) |
+| **Read** | Tampilkan semua catatan sebagai grid kartu, klik untuk buka detail |
+| **Update** | Edit catatan via `<NoteEditor />`, perubahan disimpan ke LocalStorage |
 | **Delete** | Hapus catatan dengan konfirmasi AlertDialog |
-| **Pin** | Toggle pin catatan — pinned notes tampil di atas |
 
 ### Organisasi
 
@@ -35,7 +34,7 @@
 
 ---
 
-## Data Flow (3-Layer Architecture)
+## Data Flow (Ultra Lean 3-Layer Architecture)
 
 ```
 User Action → Component/Form → Custom Hook (with Toast UX) → NotesContext (State & Integrity) → LocalStorage
@@ -51,8 +50,8 @@ Spesifikasi lengkap fungsi dan aturan pembagian tugas masing-masing Custom Hook 
 components/notes/
 ├── NoteCard.tsx          # Kartu catatan di grid (title, preview, tags, date)
 ├── NoteList.tsx          # Grid container untuk NoteCard
-├── NoteEditor.tsx        # Expanded view untuk baca/edit catatan
-├── NoteForm.tsx          # Form di dalam Dialog untuk create/edit (+ Assign Folder, Category, Tags)
+├── NoteEditor.tsx        # View & Editor murni untuk membaca & mengedit catatan
+├── NoteForm.tsx          # Form murni di dalam Dialog untuk Create Note baru
 └── NoteEmptyState.tsx    # State ketika tidak ada catatan
 
 components/layout/
@@ -62,12 +61,12 @@ components/layout/
 └── SearchBar.tsx         # Input search dengan filter logic
 
 hooks/
-├── useNotes.ts           # Wrapper CRUD notes + Toast + Hydrated Note helper
-├── useFolders.ts         # Wrapper CRUD folders + Toast + noteCount
-├── useCategories.ts      # Wrapper CRUD categories + Toast + noteCount
-├── useTags.ts            # Wrapper CRUD tags + Toast + noteCount
+├── useNotes.ts           # Wrapper CRUD notes + Toast
+├── useFolders.ts         # Wrapper CRUD folders + Toast
+├── useCategories.ts      # Wrapper CRUD categories + Toast
+├── useTags.ts            # Wrapper CRUD tags + Toast
 ├── useLocalStorage.ts    # Generic helper: murni read/write LocalStorage
-└── useSearch.ts          # Search keyword & Route filter + Pinned sorting logic
+└── useSearch.ts          # Search keyword & Route filter sederhana
 
 contexts/
 └── NotesContext.tsx      # Shared state master (Single Source of Truth) & Relational Integrity
@@ -85,7 +84,6 @@ contexts/
 
 - [ok] `useLocalStorage` hook berfungsi (generic, reusable)
 - [ok] Notes CRUD lengkap (create, read, update, delete)
-<!-- - [ ] Pin/unpin berfungsi -->
 - [ ] Folder CRUD + assign note ke folder
 - [ ] Category CRUD + assign note ke category
 - [ ] Tag CRUD + assign tag ke note (many-to-many)

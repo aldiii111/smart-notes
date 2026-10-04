@@ -247,7 +247,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 export function useNotesProvider() {
     const context = useContext(NotesContext)
     if (!context) {
-        throw new Error("useNotesProvider must be used within NotesSidebar")
+        throw new Error("useNotesProvider must be used within NotesProvider")
     }
     return context;
 }

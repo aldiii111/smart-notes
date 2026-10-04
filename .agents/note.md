@@ -1,6 +1,6 @@
-# 🪝 Spesifikasi Rancangan Custom Hooks & Data Flow
+# 🪝 Spesifikasi Rancangan Custom Hooks & Data Flow (Ultra Lean)
 
-Dokumen ini berisi spesifikasi pembagian tugas antara `NotesContext.tsx` dan Custom Hooks di `src/hooks/` untuk mencegah *double logic* dan desinkronisasi state.
+Dokumen ini berisi spesifikasi akhir pembagian tugas antara `NotesContext.tsx`, Custom Hooks sederhana, serta komponen UI (`NoteForm` & `NoteEditor`).
 
 ---
 
@@ -14,37 +14,33 @@ Dokumen ini berisi spesifikasi pembagian tugas antara `NotesContext.tsx` dan Cus
                               ▲
                               │ useContext(NotesContext)
 [Business Logic Layer] Custom Hooks (useNotes, useFolders, useCategories, useTags, useSearch)
-                       └─ Derived Data (note count, hydrated notes)
-                       └─ Filtering & Sorting (Pinned notes teratas, search & route filter)
-                       └─ UX Feedback (Toast notifications via sonner)
+                       └─ Wrapper CRUD + UX Feedback (Toast notifications via sonner)
+                       └─ Filtering Sederhana (Keyword & Filter ID)
                               ▲
                               │ Call Hooks
-[UI View Layer]        Pages & Components (HomePage, NoteForm, Sidebar, NoteCard)
+[UI View Layer]        Pages & Components (HomePage, NoteForm, NoteEditor, Sidebar, NoteCard)
 ```
 
 ---
 
-## 📋 Detail Spesifikasi Custom Hooks
+## 📋 Detail Spesifikasi Custom Hooks (Ultra Lean)
 
 ### 1. `useNotes.ts`
-* **Tujuan/Peran:** Mengonsumsi `NotesContext`, menyajikan helper data *hydrated note*, serta membungkus fungsi mutasi catatan dengan UX Feedback (`sonner` Toast).
+* **Tujuan/Peran:** Mengonsumsi `NotesContext`, menyediakan data `notes` dan wrapper CRUD yang memicu `toast` (`sonner`).
 * **Data/State yang Dikeluarkan:**
   * `notes`: `Note[]` (Daftar seluruh catatan mentah)
-  * `getNoteById(id: string)`: `Note | undefined` untuk detail view atau untuk page `/notes/:id`
-  * `getHydratedNote(id: string)`: `HydratedNote | undefined` *(Catatan beserta objek lengkap Folder, Category, dan array Tag)*
+  * `getNoteById(id: string)`: `Note | undefined` (Diambil oleh `NoteEditor` atau halaman `/notes/:id`)
 * **Fungsi / Actions:**
   * `createNote(data: CreateNoteInput)`: Memanggil `addNote` di Context + `toast.success("Catatan berhasil dibuat")`
   * `editNote(id: string, data: UpdateNoteInput)`: Memanggil `updateNote` di Context + `toast.success("Catatan berhasil diperbarui")`
   * `removeNote(id: string)`: Memanggil `deleteNote` di Context + `toast.success("Catatan berhasil dihapus")`
-  * `togglePinNote(id: string)`: Mengubah boolean `isPinned` + `toast.info(statusPin ? "Catatan dipin" : "Pin dilepas")`
 
 ---
 
 ### 2. `useFolders.ts`
-* **Tujuan/Peran:** Mengonsumsi `folders` & `notes` dari `NotesContext`, menghitung jumlah catatan per folder  disusul tanggal `updatedAt` terbaru(`noteCount`), dan memberikan Toast feedback.
+* **Tujuan/Peran:** Mengonsumsi `folders` dari `NotesContext`, menyediakan wrapper CRUD dan Toast feedback.
 * **Data/State yang Dikeluarkan:**
   * `folders`: `Folder[]`
-  * `foldersWithCount`: `(Folder & { noteCount: number })[]`
 * **Fungsi / Actions:**
   * `createFolder(data: CreateFolderInput)`: Memanggil `addFolder` + `toast.success("Folder berhasil dibuat")`
   * `editFolder(id: string, data: UpdateFolderInput)`: Memanggil `updateFolder` + `toast.success("Folder berhasil diubah")`
@@ -53,10 +49,9 @@ Dokumen ini berisi spesifikasi pembagian tugas antara `NotesContext.tsx` dan Cus
 ---
 
 ### 3. `useCategories.ts`
-* **Tujuan/Peran:** Mengonsumsi `categories` & `notes` dari Context, menghitung `noteCount` per kategori, dan memberikan Toast feedback.
+* **Tujuan/Peran:** Mengonsumsi `categories` dari Context, menyediakan wrapper CRUD dan Toast feedback.
 * **Data/State yang Dikeluarkan:**
   * `categories`: `Category[]`
-  * `categoriesWithCount`: `(Category & { noteCount: number })[]`
 * **Fungsi / Actions:**
   * `createCategory(data: CreateCategoryInput)`: Memanggil `addCategory` + `toast.success("Kategori berhasil dibuat")`
   * `editCategory(id: string, data: UpdateCategoryInput)`: Memanggil `updateCategory` + `toast.success("Kategori berhasil diubah")`
@@ -65,10 +60,9 @@ Dokumen ini berisi spesifikasi pembagian tugas antara `NotesContext.tsx` dan Cus
 ---
 
 ### 4. `useTags.ts`
-* **Tujuan/Peran:** Mengonsumsi `tags` & `notes` dari Context, menghitung `noteCount` per tag, dan memberikan Toast feedback.
+* **Tujuan/Peran:** Mengonsumsi `tags` dari Context, menyediakan wrapper CRUD dan Toast feedback.
 * **Data/State yang Dikeluarkan:**
   * `tags`: `Tag[]`
-  * `tagsWithCount`: `(Tag & { noteCount: number })[]`
 * **Fungsi / Actions:**
   * `createTag(data: CreateTagInput)`: Memanggil `addTag` + `toast.success("Tag berhasil dibuat")`
   * `editTag(id: string, data: UpdateTagInput)`: Memanggil `updateTag` + `toast.success("Tag berhasil diubah")`
@@ -76,34 +70,31 @@ Dokumen ini berisi spesifikasi pembagian tugas antara `NotesContext.tsx` dan Cus
 
 ---
 
-### 5. `useSearch.ts` (Filtering & Sorting)
-* **Tujuan/Peran:** Memfilter daftar catatan secara dinamis berdasarkan pencarian kata kunci & parameter Rute URL (`folderId`, `categoryId`, `tagId`), serta mengurutkannya.
-* **Parameters Input:**
-  * `notes`: `Note[]`
-  * `searchKeyword`: `string`
-  * `filterType`: `'all' | 'folder' | 'category' | 'tag'`
-  * `filterId`: `string | null`
-* **Output:**
-  * `filteredNotes`: `Note[]` (Daftar catatan ter-filter, dengan **Pinned Notes (`isPinned: true`) selalu berada di paling atas**)
+### 5. `useSearch.ts` (Filtering Sederhana)
+* **Tujuan/Peran:** Memfilter daftar catatan secara sederhana berdasarkan pencarian kata kunci & `filterId` dari rute URL.
+* **Parameters Input:** `(notes: Note[], keyword: string, filterId: string | null)`
+* **Output:** `filteredNotes: Note[]`
 
 ---
 
-## 🔗 Alur Assign Entitas (Folder, Kategori, Tag) di `NoteForm`
+## 🎨 Pemisahan Komponen UI: `NoteForm` vs `NoteEditor`
 
-Komponen `NoteForm` (dalam Dialog) memanggil `useFolders()`, `useCategories()`, dan `useTags()` untuk menampilkan opsi dropdown / multi-select:
+Untuk menjaga kode tetap bersih dan sederhana:
 
-1. **Mode Edit (`initialData` ada):**
-   * Menggunakan `initialData.folderId`, `initialData.categoryId`, dan `initialData.tagIds` untuk mengisi nilai awal form.
-2. **Mode Create Baru (`initialData` tidak ada + Smart Defaults):**
-   * Membaca parameter Rute URL saat tombol `+ New Note` ditekan:
-     * Jika dibuka saat berada di `/folders/:id` → Dropdown Folder otomatis terisi `id` folder tersebut.
-     * Jika dibuka saat berada di `/categories/:id` → Dropdown Kategori otomatis terisi `id` kategori tersebut.
-     * Jika dibuka saat berada di `/tags/:id` → Multi-select Tag otomatis mencakup `id` tag tersebut.
-     * Jika di `/` (HomePage) → Pilihan awal kosong (`null` / `[]`).
+1. **`NoteForm.tsx` (Murni untuk Create Note):**
+   * Digunakan di dalam Dialog Popup saat tombol `+ New Note` diklik.
+   * State awal form **selalu kosong** (`title: ""`, `content: ""`).
+   * Menggunakan **Smart Defaults** berdasarkan rute URL aktif saat ini (misal: jika berada di `/folders/:id`, folder awal otomatis terisi `id` tersebut).
+   * Hanya mengimpor dan memanggil **`createNote`** dari `useNotes()`.
+
+2. **`NoteEditor.tsx` (Murni untuk Read & Edit Note):**
+   * Digunakan untuk membaca dan mengedit catatan yang sudah ada di `/notes/:id`.
+   * Menerima catatan yang akan diedit / mengambil catatan via `getNoteById(id)`.
+   * Mengimpor dan memanggil **`editNote`** dari `useNotes()`.
 
 ---
 
 ## 📌 Aturan Utama Integrasi (Mencegah Bentrok)
 1. **Zero Duplicate State:** Tidak ada `useState` internal di dalam Custom Hooks untuk menyimpan daftar entitas. Semua hook wajib mengonsumsi data langsung dari `NotesContext`.
-2. **Single Storage Sync:** Hanya `NotesContext` yang berinteraksi dengan `useLocalStorage.ts`. Custom Hooks tidak memanggil `saveNotes` atau `saveFolders` secara langsung.
-3. **UX Feedback Centralized:** Toast Notification dipicu di level Custom Hooks agar komponen UI (seperti form atau dialog) murni hanya menangani tampilan/submit.
+2. **Single Storage Sync:** Hanya `NotesContext` yang berinteraksi dengan `useLocalStorage.ts`.
+3. **UX Feedback Centralized:** Toast Notification dipicu di level Custom Hooks.
