@@ -11,10 +11,9 @@ import {
 } from "@/components/ui/sidebar"
 
 const navItems = [
-  { label: "Home",       icon: House,       to: "/"           },
-  { label: "Folders",    icon: FolderOpen,  to: "/folders"    },
-  { label: "Tags",       icon: Tag,         to: "/tags"       },
-  { label: "Categories", icon: LayoutGrid,  to: "/categories" },
+  { label: "Folders",    icon: FolderOpen, idx: 0 },
+  { label: "Tags",       icon: Tag,        idx: 1 },
+  { label: "Categories", icon: LayoutGrid, idx: 2 },
 ]
 
 export default function MainSidebar() {
@@ -29,19 +28,18 @@ export default function MainSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="gap-0.5">
-              {navItems.map(({ label, icon: Icon, to }) => (
-                <SidebarMenuItem key={to}>
+              <SidebarMenuItem>
                   <SidebarMenuButton
-                    isActive={isActive(to)}
-                    tooltip={label}
+                    isActive={isActive("/")}
+                    tooltip={"Home"}
                     className="h-10 rounded-lg hover:bg-sidebar-accent/50 data-active:bg-sidebar-accent/70 group-data-[collapsible=icon]:mx-auto"
-                    render={<NavLink to={to} />}
+                    render={<NavLink to={"/"} />}
                   >
-                    <Icon />
-                    <span>{label}</span>
+                    <House />
+                    <span>Home</span>
                   </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                  
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
