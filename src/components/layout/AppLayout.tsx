@@ -17,7 +17,7 @@ function InnerLayout() {
      className="flex-1"
      style={{ minHeight: 0 }}
      >
-      <SidebarInset className="md:rounded-xl m-2">
+      <SidebarInset className="md:rounded-xl m-2 ring-1 ring-foreground/5">
         <Header toggleLeft={toggleLeft} />
         <Outlet />
       </SidebarInset>

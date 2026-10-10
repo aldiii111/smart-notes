@@ -1,7 +1,7 @@
 export interface Folder {
   id: string;
   name: string;
-  color: string;
+  color?: string;
   createdAt: string;
 }
 
