@@ -46,7 +46,7 @@ export default function MainSidebar() {
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState(null)
   const [selectedType, setSelectedType] = React.useState("")
-  const [editContent, setEditContent] = React.useState(null);
+  const [editContent, setEditContent] = React.useState("");
   const [error, setError] = React.useState(false);
 
   const navSections = React.useMemo(() => [
