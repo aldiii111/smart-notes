@@ -18,7 +18,7 @@ export default function NoteForm() {
   const [selectedTag, setSelectedTag] = React.useState<string[]>([])
 
   const handleSave = () => {
-    if(!editTitle.trim() || !editContent.trim()) {
+    if (!editTitle.trim() || !editContent.trim()) {
       setError(true)
       return;
     }
@@ -31,7 +31,7 @@ export default function NoteForm() {
     })
     setIsView(false)
     setError(false)
-  } 
+  }
 
   return <div>NoteForm</div>;
 }

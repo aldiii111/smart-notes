@@ -3,8 +3,8 @@ import { useNotes } from "@/hooks/useNotes"
 import { useFolders } from "@/hooks/useFolders"
 import { useCategories } from "@/hooks/useCategories"
 import { useTags } from "@/hooks/useTags"
- 
- export default function NoteEditor() {
+
+export default function NoteEditor() {
   const { notes, editNote } = useNotes()
   const { folders } = useFolders()
   const { categories } = useCategories()
@@ -18,7 +18,7 @@ import { useTags } from "@/hooks/useTags"
   const [selectedTag, setSelectedTag] = React.useState<string[]>([])
 
   const handleSave = (id: string) => {
-    if(!editTitle.trim() || !editContent.trim()) {
+    if (!editTitle.trim() || !editContent.trim()) {
       setError(true)
       return;
     }
@@ -31,7 +31,7 @@ import { useTags } from "@/hooks/useTags"
     })
     setIsView(false)
     setError(false)
-  } 
+  }
 
   return <div>NoteEditor</div>;
 }
