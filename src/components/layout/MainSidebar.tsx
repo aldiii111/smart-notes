@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Link, useLocation } from "react-router"
-import { House, MoreVertical, Edit, FolderOpen, Tag, LayoutGrid, LucideTrash } from "lucide-react"
+import { House, MoreVertical, Edit, FolderOpen, Tags, LayoutGrid, LucideTrash } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -31,6 +31,9 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
+import type { Folder } from "@/types/folder";
+import type { Category } from "@/types/category";
+import type { Tag } from "@/types/tag";
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useFolders } from "@/hooks/useFolders"
@@ -44,14 +47,14 @@ export default function MainSidebar() {
   const { tags, removeTag, editTag } = useTags()
   const [isView, setIsView] = React.useState(false)
   const [isEditOpen, setIsEditOpen] = React.useState(false);
-  const [selectedItem, setSelectedItem] = React.useState(null)
+  const [selectedItem, setSelectedItem] = React.useState<Folder | Category | Tag | null>(null)
   const [selectedType, setSelectedType] = React.useState("")
   const [editContent, setEditContent] = React.useState("");
   const [error, setError] = React.useState(false);
 
   const navSections = React.useMemo(() => [
     { label: "Folders", icon: FolderOpen, items: folders },
-    { label: "Tags", icon: Tag, items: tags },
+    { label: "Tags", icon: Tags, items: tags },
     { label: "Categories", icon: LayoutGrid, items: categories },
   ], [folders, categories, tags])
 

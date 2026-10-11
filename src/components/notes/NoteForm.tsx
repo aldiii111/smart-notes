@@ -15,7 +15,7 @@ export default function NoteForm() {
   const [editContent, setEditContent] = React.useState("")
   const [selectedFolder, setSelectedFolder] = React.useState("")
   const [selectedCategory, setSelectedCategory] = React.useState("")
-  const [selectedTag, setSelectedTag] = React.useState([])
+  const [selectedTag, setSelectedTag] = React.useState<string[]>([])
 
   const handleSave = () => {
     if(!editTitle.trim() || !editContent.trim()) {
@@ -27,7 +27,7 @@ export default function NoteForm() {
       content: editContent.trim(),
       folderId: selectedFolder.trim(),
       categoryId: selectedCategory.trim(),
-      tagIds: selectedTag.find(n => n.trim())
+      tagIds: selectedTag
     })
     setIsView(false)
     setError(false)
