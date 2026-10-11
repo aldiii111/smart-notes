@@ -21,15 +21,15 @@ export function useSearch(
         }
 
         setSearchParams(params, { replace: true })
-    }, [])
+    }, [searchParams, setSearchParams])
 
     const filteredNotes = useMemo(() => {
         return notes.filter((note) => {
-            if (filterType === "folder") return note.folderId === filterId
-            if (filterType === "category") return note.categoryId === filterId
-            if (filterType === "tag") return filterId ? note.tagIds.includes(filterId) : false
+            if (filterType === "folder" && note.folderId !== filterId) return false
+            if (filterType === "category" && note.categoryId !== filterId) return false
+            if (filterType === "tag" && note.tagIds.includes(filterId)) return false
 
-            if (keyword.trim()) {
+            if (filterType !== "all" && keyword.trim()) {
                 const words = keyword.toLowerCase().replace(/^#/, "")
                 const title = note.title.toLowerCase().includes(words)
                 const content = note.content.toLowerCase().includes(words)

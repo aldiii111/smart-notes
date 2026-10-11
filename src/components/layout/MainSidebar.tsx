@@ -28,12 +28,8 @@ import {
 } from "@/components/ui/dialog"
 import {
   Field,
-  FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSeparator,
-  FieldSet,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -44,13 +40,13 @@ import { useTags } from "@/hooks/useTags"
 export default function MainSidebar() {
   const location = useLocation()
   const { folders, removeFolder, editFolder } = useFolders()
-  const { categories } = useCategories()
-  const { tags } = useTags()
+  const { categories, removeCategory, editCategory } = useCategories()
+  const { tags, removeTag, editTag } = useTags()
   const [isView, setIsView] = React.useState(false)
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState(null)
   const [selectedType, setSelectedType] = React.useState("")
-  const [editContent, setEditContent] = React.useState("");
+  const [editContent, setEditContent] = React.useState(null);
   const [error, setError] = React.useState(false);
 
   const navSections = React.useMemo(() => [
@@ -63,18 +59,26 @@ export default function MainSidebar() {
     to === "/" ? location.pathname === "/" : location.pathname.startsWith(to)
 
   const handleDel = (id: string) => {
-    if (window.confirm("yakin ingin menghapus ini?")) {
-      removeFolder(id)
-      setIsView(false)
-    }
+    if (selectedType === "Folders") removeFolder(id)
+    if (selectedType === "Tags") removeTag(id)
+    if (selectedType === "Categories") removeCategory(id)
+
+    setIsView(false)
   }
 
-  const handleSave = (id: string,) => {
-    if (selectedItem.id === id) {
-      alert("yeyy")
+  const handleSave = () => {
+    if (!editContent.trim()) {
+      setError(true)
+      return;
     }
-  }
 
+    if (selectedType === "Folders") editFolder(selectedItem.id, { name: editContent.trim() })
+    if (selectedType === "Tags") editTag(selectedItem.id, { name: editContent.trim() })
+    if (selectedType === "Categories") editCategory(selectedItem.id, { name: editContent.trim() })
+    setIsEditOpen(false)
+    setError(false)
+  }
+  console.log()
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarContent className="justify-center">
@@ -142,7 +146,7 @@ export default function MainSidebar() {
       </SidebarContent>
       <Dialog open={isView} onOpenChange={setIsView}>
         <DialogContent className="w-[300px] sm:max-w-[300px] p-8">
-          <Button variant="outline" size="sm" onClick={() => { setIsView(false); setIsEditOpen(true); setEditContent(selectedItem?.name)}} className="max-h-(--available-height)">
+          <Button variant="outline" size="sm" onClick={() => { setIsView(false); setIsEditOpen(true); setEditContent(selectedItem?.name) }} className="max-h-(--available-height)">
             <Edit className="h-4 w-4 mr-2" />
             Edit
           </Button>
@@ -153,27 +157,27 @@ export default function MainSidebar() {
         </DialogContent>
       </Dialog>
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <form>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{selectedItem?.name}</DialogTitle>
-              <DialogDescription>Edit disini, dan jgn lupa save</DialogDescription>
-            </DialogHeader>
-            <FieldGroup>
-              <Field>
-                <FieldLabel>Name</FieldLabel>
-                <Input
-                  type="text"
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)} />
-              </Field>
-            </FieldGroup>
-            <DialogFooter>
-              <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
-              <Button variant="outline" type="submit" onClick={() => { setIsEditOpen(false); handleSave(selectedItem.id) }}>Save</Button>
-            </DialogFooter>
-          </DialogContent>
-        </form>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{selectedItem?.name}</DialogTitle>
+            <DialogDescription>Edit disini, dan jgn lupa save</DialogDescription>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <FieldLabel>Name</FieldLabel>
+              <Input
+                placeholder="edit title"
+                type="text"
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                className={error && !editContent.trim() ? "border-red-500" : ""} />
+            </Field>
+          </FieldGroup>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+            <Button variant="outline" type="submit" onClick={() => handleSave() }>Save</Button>
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
     </Sidebar>
   )
