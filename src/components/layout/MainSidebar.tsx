@@ -47,7 +47,7 @@ export default function MainSidebar() {
   const { tags, removeTag, editTag } = useTags()
   const [isView, setIsView] = React.useState(false)
   const [isEditOpen, setIsEditOpen] = React.useState(false);
-  const [selectedItem, setSelectedItem] = React.useState<Folder | Category | Tag | null>(null)
+  const [selectedItem, setSelectedItem] = React.useState<Folder | Category | Tag>(({} as Folder | Category | Tag));
   const [selectedType, setSelectedType] = React.useState("")
   const [editContent, setEditContent] = React.useState("");
   const [error, setError] = React.useState(false);
