@@ -18,7 +18,7 @@ export default function Header({ toggleLeft }: HeaderProps) {
         <span className="sr-only">Toggle Sidebar</span>
       </Button>
 
-      <div className="flex gap-10 items-center">
+      <div className="flex flex-col gap-5 items-center sm:flex-row sm:gap-10">
         <SearchBar />
 
         <NoteForm />
