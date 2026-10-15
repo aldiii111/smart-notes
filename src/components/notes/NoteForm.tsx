@@ -1,5 +1,5 @@
-import * as React from "react"
-import { Plus } from "lucide-react"
+import * as React from "react";
+import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -9,22 +9,22 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { useNotes } from "@/hooks/useNotes"
-import { useFolders } from "@/hooks/useFolders"
-import { useCategories } from "@/hooks/useCategories"
-import { useTags } from "@/hooks/useTags"
-import { cn } from "cn"
+} from "@/components/ui/dialog";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { useNotes } from "@/hooks/useNotes";
+import { useFolders } from "@/hooks/useFolders";
+import { useCategories } from "@/hooks/useCategories";
+import { useTags } from "@/hooks/useTags";
+import { cn } from "cn";
 
 interface NoteFormProps {
-  defaultFolderId?: string
-  defaultCategoryId?: string
-  defaultTagId?: string[]
-  trigger?: React.ReactElement
+  defaultFolderId?: string;
+  defaultCategoryId?: string;
+  defaultTagId?: string[];
+  trigger?: React.ReactElement;
 }
 
 export default function NoteForm({
@@ -33,42 +33,35 @@ export default function NoteForm({
   defaultTagId = [],
   trigger,
 }: NoteFormProps) {
-  const { createNote } = useNotes()
-  const { folders } = useFolders()
-  const { categories } = useCategories()
-  const { tags } = useTags()
+  const { createNote } = useNotes();
+  const { folders } = useFolders();
+  const { categories } = useCategories();
+  const { tags } = useTags();
 
-  const [isView, setIsView] = React.useState(false)
-  const [error, setError] = React.useState(false)
-  const [editTitle, setEditTitle] = React.useState("")
-  const [editContent, setEditContent] = React.useState("")
-  const [selectedFolder, setSelectedFolder] = React.useState(defaultFolderId)
-  const [selectedCategory, setSelectedCategory] = React.useState(defaultCategoryId)
-  const [selectedTag, setSelectedTag] = React.useState<string[]>(defaultTagId)
+  const [isView, setIsView] = React.useState(false);
+  const [error, setError] = React.useState(false);
+  const [editTitle, setEditTitle] = React.useState("");
+  const [editContent, setEditContent] = React.useState("");
+  const [selectedFolder, setSelectedFolder] = React.useState(defaultFolderId);
+  const [selectedCategory, setSelectedCategory] = React.useState(defaultCategoryId);
+  const [selectedTag, setSelectedTag] = React.useState<string[]>(defaultTagId);
 
-  React.useEffect(() => {
-    if (isView) {
-      setEditTitle("")
-      setEditContent("")
-      setSelectedFolder(defaultFolderId)
-      setSelectedCategory(defaultCategoryId)
-      setSelectedTag(defaultTagId)
-      setError(false)
-    }
-  }, [isView, defaultFolderId, defaultCategoryId, defaultTagId])
+
 
   const handleToggleTag = (tagId: string) => {
     setSelectedTag((prev) =>
-      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
-    )
-  }
+      prev.includes(tagId)
+        ? prev.filter((id) => id !== tagId)
+        : [...prev, tagId],
+    );
+  };
 
   const handleSave = (e?: React.FormEvent) => {
-    if (e) e.preventDefault()
+    if (e) e.preventDefault();
 
     if (!editTitle.trim() || !editContent.trim()) {
-      setError(true)
-      return
+      setError(true);
+      return;
     }
 
     createNote({
@@ -77,14 +70,27 @@ export default function NoteForm({
       folderId: selectedFolder ? selectedFolder.trim() : null,
       categoryId: selectedCategory ? selectedCategory.trim() : null,
       tagIds: selectedTag,
-    })
+    });
 
-    setIsView(false)
-    setError(false)
-  }
+    setIsView(false);
+    setError(false);
+  };
 
   return (
-    <Dialog open={isView} onOpenChange={setIsView}>
+    <Dialog
+      open={isView}
+      onOpenChange={(open) => {
+        setIsView(open);
+        if (open) {
+          setEditTitle("");
+          setEditContent("");
+          setSelectedFolder(defaultFolderId);
+          setSelectedCategory(defaultCategoryId);
+          setSelectedTag(defaultTagId);
+          setError(false);
+        }
+      }}
+    >
       <DialogTrigger
         render={
           trigger ?? (
@@ -99,7 +105,8 @@ export default function NoteForm({
         <DialogHeader>
           <DialogTitle>Buat Catatan Baru</DialogTitle>
           <DialogDescription>
-            Tulis judul dan isi catatan. Kamu juga bisa memilih folder, kategori, dan tag.
+            Tulis judul dan isi catatan. Kamu juga bisa memilih folder,
+            kategori, dan tag.
           </DialogDescription>
         </DialogHeader>
 
@@ -109,12 +116,19 @@ export default function NoteForm({
               <FieldLabel>Judul</FieldLabel>
               <Input
                 placeholder="Judul catatan..."
+                maxLength={200}
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
-                className={error && !editTitle.trim() ? "border-destructive focus-visible:ring-destructive/20" : ""}
+                className={
+                  error && !editTitle.trim()
+                    ? "border-destructive focus-visible:ring-destructive/20 text-warp break-all"
+                    : ""
+                }
               />
               {error && !editTitle.trim() && (
-                <span className="text-xs text-destructive">Judul tidak boleh kosong</span>
+                <span className="text-xs text-destructive">
+                  Judul tidak boleh kosong
+                </span>
               )}
             </Field>
 
@@ -122,13 +136,20 @@ export default function NoteForm({
               <FieldLabel>Isi Catatan</FieldLabel>
               <Textarea
                 placeholder="Tuliskan isi catatanmu di sini..."
+                maxLength={5000}
                 rows={4}
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                className={error && !editContent.trim() ? "border-destructive focus-visible:ring-destructive/20" : ""}
+                className={
+                  error && !editContent.trim()
+                    ? "border-destructive focus-visible:ring-destructive/20 text-warp break-all"
+                    : ""
+                }
               />
               {error && !editContent.trim() && (
-                <span className="text-xs text-destructive">Isi catatan tidak boleh kosong</span>
+                <span className="text-xs text-destructive">
+                  Isi catatan tidak boleh kosong
+                </span>
               )}
             </Field>
 
@@ -140,11 +161,18 @@ export default function NoteForm({
                   onChange={(e) => setSelectedFolder(e.target.value)}
                   className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
                 >
-                  <option value="" className="bg-popover text-popover-foreground">
+                  <option
+                    value=""
+                    className="bg-popover text-popover-foreground"
+                  >
                     Tanpa Folder
                   </option>
                   {folders.map((folder) => (
-                    <option key={folder.id} value={folder.id} className="bg-popover text-popover-foreground">
+                    <option
+                      key={folder.id}
+                      value={folder.id}
+                      className="bg-popover text-popover-foreground"
+                    >
                       {folder.name}
                     </option>
                   ))}
@@ -158,11 +186,18 @@ export default function NoteForm({
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
                 >
-                  <option value="" className="bg-popover text-popover-foreground">
+                  <option
+                    value=""
+                    className="bg-popover text-popover-foreground"
+                  >
                     Tanpa Kategori
                   </option>
                   {categories.map((category) => (
-                    <option key={category.id} value={category.id} className="bg-popover text-popover-foreground">
+                    <option
+                      key={category.id}
+                      value={category.id}
+                      className="bg-popover text-popover-foreground"
+                    >
                       {category.name}
                     </option>
                   ))}
@@ -174,10 +209,12 @@ export default function NoteForm({
               <FieldLabel>Tags</FieldLabel>
               <div className="flex flex-wrap gap-1.5 pt-0.5">
                 {tags.length === 0 ? (
-                  <p className="text-xs text-muted-foreground">Belum ada tag yang dibuat.</p>
+                  <p className="text-xs text-muted-foreground">
+                    Belum ada tag yang dibuat.
+                  </p>
                 ) : (
                   tags.map((tag) => {
-                    const isSelected = selectedTag.includes(tag.id)
+                    const isSelected = selectedTag.includes(tag.id);
                     return (
                       <button
                         type="button"
@@ -187,12 +224,12 @@ export default function NoteForm({
                           "inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer border",
                           isSelected
                             ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-muted/40 text-muted-foreground border-border hover:bg-muted hover:text-foreground"
+                            : "bg-muted/40 text-muted-foreground border-border hover:bg-muted hover:text-foreground",
                         )}
                       >
                         #{tag.name}
                       </button>
-                    )
+                    );
                   })
                 )}
               </div>
@@ -208,5 +245,5 @@ export default function NoteForm({
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

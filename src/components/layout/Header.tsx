@@ -21,7 +21,9 @@ export default function Header({ toggleLeft }: HeaderProps) {
       <div className="flex flex-col gap-5 items-center sm:flex-row sm:gap-10">
         <SearchBar />
 
-        <NoteForm />
+        <NoteForm 
+        
+        />
       </div>
 
       <Button variant="ghost" size="icon-sm" onClick={toggleRight}>
