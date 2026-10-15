@@ -46,8 +46,6 @@ export default function NoteForm({
   const [selectedCategory, setSelectedCategory] = React.useState(defaultCategoryId);
   const [selectedTag, setSelectedTag] = React.useState<string[]>(defaultTagId);
 
-
-
   const handleToggleTag = (tagId: string) => {
     setSelectedTag((prev) =>
       prev.includes(tagId)
