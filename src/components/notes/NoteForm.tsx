@@ -18,6 +18,8 @@ import { useNotes } from "@/hooks/useNotes";
 import { useFolders } from "@/hooks/useFolders";
 import { useCategories } from "@/hooks/useCategories";
 import { useTags } from "@/hooks/useTags";
+import { useLocation } from "react-router";
+import { useParams } from "react-router";
 import { cn } from "cn";
 
 interface NoteFormProps {
@@ -42,9 +44,21 @@ export default function NoteForm({
   const [error, setError] = React.useState(false);
   const [editTitle, setEditTitle] = React.useState("");
   const [editContent, setEditContent] = React.useState("");
-  const [selectedFolder, setSelectedFolder] = React.useState(defaultFolderId);
-  const [selectedCategory, setSelectedCategory] = React.useState(defaultCategoryId);
+  const [selectedFolder, setSelectedFolder] = React.useState<string | undefined>(defaultFolderId);
+  const [selectedCategory, setSelectedCategory] = React.useState<string | undefined>(defaultCategoryId);
   const [selectedTag, setSelectedTag] = React.useState<string[]>(defaultTagId);
+
+  let location = useLocation();
+  let { id } = useParams();
+
+  React.useEffect(() => {
+    if (location.pathname.startsWith("/folder")) {
+      setSelectedFolder(id);
+    }
+    if(location.pathname.startsWith("/categories")) {
+      selectedCategory(id)
+    }
+  }, [location.pathname, id]);
 
   const handleToggleTag = (tagId: string) => {
     setSelectedTag((prev) =>
@@ -82,9 +96,9 @@ export default function NoteForm({
         if (open) {
           setEditTitle("");
           setEditContent("");
-          setSelectedFolder(defaultFolderId);
-          setSelectedCategory(defaultCategoryId);
-          setSelectedTag(defaultTagId);
+          // setSelectedFolder(defaultFolderId);
+          // setSelectedCategory(defaultCategoryId);
+          // setSelectedTag(defaultTagId);
           setError(false);
         }
       }}
