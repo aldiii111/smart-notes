@@ -44,19 +44,28 @@ export default function NoteForm({
   const [error, setError] = React.useState(false);
   const [editTitle, setEditTitle] = React.useState("");
   const [editContent, setEditContent] = React.useState("");
-  const [selectedFolder, setSelectedFolder] = React.useState<string | undefined>(defaultFolderId);
-  const [selectedCategory, setSelectedCategory] = React.useState<string | undefined>(defaultCategoryId);
+  const [selectedFolder, setSelectedFolder] = React.useState<string | "">(defaultFolderId);
+  const [selectedCategory, setSelectedCategory] = React.useState<string | "">(defaultCategoryId);
   const [selectedTag, setSelectedTag] = React.useState<string[]>(defaultTagId);
 
   let location = useLocation();
   let { id } = useParams();
 
   React.useEffect(() => {
-    if (location.pathname.startsWith("/folder")) {
-      setSelectedFolder(id);
+    if (location.pathname.startsWith("/folders")) {
+      setSelectedFolder(id ?? "");
+      setSelectedCategory("")
+      setSelectedTag([])
     }
-    if(location.pathname.startsWith("/categories")) {
-      selectedCategory(id)
+    else if (location.pathname.startsWith("/categories/")) {
+      setSelectedCategory(id ?? "")
+      setSelectedFolder("")
+      setSelectedTag([])
+    }
+     else if (location.pathname.startsWith("/tags/")) {
+      setSelectedTag([id ?? ""])
+      setSelectedFolder("")
+      setSelectedCategory("")
     }
   }, [location.pathname, id]);
 
@@ -93,12 +102,9 @@ export default function NoteForm({
       open={isView}
       onOpenChange={(open) => {
         setIsView(open);
-        if (open) {
+        if (!open) {
           setEditTitle("");
           setEditContent("");
-          // setSelectedFolder(defaultFolderId);
-          // setSelectedCategory(defaultCategoryId);
-          // setSelectedTag(defaultTagId);
           setError(false);
         }
       }}
