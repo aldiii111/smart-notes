@@ -63,7 +63,7 @@ export default function NoteForm({
       setSelectedTag([])
     }
      else if (location.pathname.startsWith("/tags/")) {
-      setSelectedTag([id ?? ""])
+      setSelectedTag([id])
       setSelectedFolder("")
       setSelectedCategory("")
     }

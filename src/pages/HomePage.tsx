@@ -1,10 +1,8 @@
 import * as React from "react";
 import { useNavigate } from "react-router";
-
 import { useSearch } from "@/hooks/useSearch";
 import { useNotes } from "@/hooks/useNotes";
 import NoteList from "@/components/notes/NoteList";
-import NoteCard from "@/components/notes/NoteCard";
 
 export default function HomePage() {
   const { filteredNotes } = useSearch("all");
