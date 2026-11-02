@@ -54,8 +54,8 @@ export default function MainSidebar() {
 
   const navSections = React.useMemo(() => [
     { label: "Folders", icon: FolderOpen, items: folders },
-    { label: "Tags", icon: Tags, items: tags },
     { label: "Categories", icon: LayoutGrid, items: categories },
+    { label: "Tags", icon: Tags, items: tags },
   ], [folders, categories, tags])
 
   const isActive = (to: string) =>

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { PanelLeftIcon, PanelRightIcon } from "lucide-react";
 import SearchBar from "./SearchBar";
 import NoteForm from "@/components/notes/NoteForm";
+import AddAnythingContent from "@/components/notes/AddAnything"
 
 interface HeaderProps {
   toggleLeft: () => void;
@@ -18,10 +19,12 @@ export default function Header({ toggleLeft }: HeaderProps) {
         <span className="sr-only">Toggle Sidebar</span>
       </Button>
 
-      <div className="flex flex-col gap-5 items-center sm:flex-row sm:gap-10">
+      <div className="flex flex-col items-center sm:flex-row sm:gap-10">
         <SearchBar />
 
         <NoteForm />
+
+        <AddAnythingContent/>
       </div>
 
       <Button variant="ghost" size="icon-sm" onClick={toggleRight}>

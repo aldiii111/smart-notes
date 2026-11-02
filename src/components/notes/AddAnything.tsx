@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Plus, ScissorsSquareDashedBottom } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
     Dialog,
     DialogClose,
@@ -12,41 +12,52 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useFolders } from "@/hooks/useFolders";
 import { useCategories } from "@/hooks/useCategories";
 import { useTags } from "@/hooks/useTags";
-import { useLocation } from "react-router";
 
 function AddAnythingContent() {
     const { createFolder } = useFolders()
     const { createCategory } = useCategories()
     const { createTag } = useTags()
-    let location = useLocation()
-    const [editTitle, setEditTitle] = React.useState("");
+    const [isView, setIsView] = React.useState(false);
+    const [editJudul, setEditJudul] = React.useState("");
+    const [isValue, setIsValue] = React.useState("")
     const [error, setError] = React.useState(false);
 
-    const path = ["/folders", "/categories/", "/tags/"]
+    const path = ["folders", "categories", "tags"]
 
     const handleSave = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
 
-        if (!editTitle.trim()) {
+        if (!editJudul.trim() || !isValue) {
             setError(true)
             return;
         }
-        const pathd = path.includes(location.pathname)
-        console.log(pathd)
+
+        if (isValue === "folders") createFolder({ name: editJudul });
+        if (isValue === "categories") createCategory({ name: editJudul });
+        if (isValue === "tags") createTag({ name: editJudul });
+
+        setIsView(false);
+        setError(false);
     }
 
     return (
-        <Dialog>
+        <Dialog open={isView} onOpenChange={(open) => {
+            setIsView(open);
+            if (!open) {
+                setEditJudul("");
+                setIsValue("");
+                setError(false);
+            }
+        }}>
             <DialogTrigger
                 render={
                     <Button size="sm">
                         <Plus className="mr-1.5 h-4 w-4" />
-                        Catatan Baru
+                        Filter
                     </Button>
                 }
             />
@@ -64,19 +75,43 @@ function AddAnythingContent() {
                             <Input
                                 placeholder="Judul catatan..."
                                 maxLength={200}
-                                value={editTitle}
-                                onChange={(e) => setEditTitle(e.target.value)}
+                                value={editJudul}
+                                onChange={(e) => setEditJudul(e.target.value)}
                                 className={
-                                    error && !editTitle.trim()
+                                    error && !editJudul.trim()
                                         ? "border-destructive focus-visible:ring-destructive/20 text-warp break-all"
                                         : ""
                                 }
                             />
-                            {error && !editTitle.trim() && (
+                            {error && !editJudul.trim() && (
                                 <span className="text-xs text-destructive">
                                     Judul tidak boleh kosong
                                 </span>
                             )}
+                        </Field>
+                        <Field>
+                            <FieldLabel>Judul</FieldLabel>
+                            <select
+                                value={isValue}
+                                onChange={(e) => setIsValue(e.target.value)}
+                                className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+                            >
+                                <option
+                                    value=""
+                                    className="bg-popover text-popover-foreground"
+                                >
+                                    Select Filter
+                                </option>
+                                {path.map((path) => (
+                                    <option
+                                        key={path}
+                                        value={path}
+                                        className="bg-popover text-popover-foreground"
+                                    >
+                                        {path}
+                                    </option>
+                                ))}
+                            </select>
                         </Field>
                     </FieldGroup>
                     <DialogFooter className="mt-2">
