@@ -1,11 +1,12 @@
-import * as React from "react";
 import { useNavigate } from "react-router";
 import { useSearch } from "@/hooks/useSearch";
 import { useNotes } from "@/hooks/useNotes";
 import NoteList from "@/components/notes/NoteList";
+import { useParams } from "react-router";
 
 function CategoryPage() {
-  const { filteredNotes } = useSearch("category");
+  const { id } = useParams()
+  const { filteredNotes } = useSearch("category", `${id}`);
   const navigate = useNavigate()
   const { notes } = useNotes()
 

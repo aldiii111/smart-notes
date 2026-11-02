@@ -1,5 +1,26 @@
-
+import { useNavigate } from "react-router";
+import { useSearch } from "@/hooks/useSearch";
+import { useNotes } from "@/hooks/useNotes";
+import NoteList from "@/components/notes/NoteList";
+import { useParams } from "react-router";
 
 export default function FolderPage() {
-    return null
+  const { id } = useParams()
+  const { filteredNotes } = useSearch("folder", `${id}`);
+  const navigate = useNavigate()
+  const { notes } = useNotes()
+
+  const handleClick = (id: string) => {
+    const notee = notes.find((n) => n.id === id)
+    navigate(`/notes/${notee?.id}`)
+  }
+
+  return (
+    <div className="flex flex-1 flex-col p-10">
+      <NoteList
+      notes={filteredNotes}
+      onNoteClick={handleClick}
+      />
+    </div>
+  );
 }
