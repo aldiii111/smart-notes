@@ -27,7 +27,7 @@ export function useSearch(
         return notes.filter((note) => {
             if (filterType === "folder" && note.folderId !== filterId) return false
             if (filterType === "category" && note.categoryId !== filterId) return false
-            if (filterType === "tag" && filterId && !note.tagIds.includes(filterId)) return false
+            if (filterType === "tag" && !note.tagIds.includes(filterId)) return false
 
             if (keyword.trim()) {
                 const words = keyword.toLowerCase().replace(/^#/, "")

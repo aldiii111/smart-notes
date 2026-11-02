@@ -21,6 +21,7 @@ import { useTags } from "@/hooks/useTags";
 import { useLocation } from "react-router";
 import { useParams } from "react-router";
 import { cn } from "cn";
+import AddAnythingContent from "@/components/notes/AddAnything"
 
 interface NoteFormProps {
   defaultFolderId?: string;
@@ -40,6 +41,7 @@ export default function NoteForm({
   const { categories } = useCategories();
   const { tags } = useTags();
 
+  const [isAdd, setIsAdd] = React.useState(false)
   const [isView, setIsView] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [editTitle, setEditTitle] = React.useState("");
@@ -62,7 +64,7 @@ export default function NoteForm({
       setSelectedFolder("")
       setSelectedTag([])
     }
-     else if (location.pathname.startsWith("/tags/")) {
+    else if (location.pathname.startsWith("/tags/")) {
       setSelectedTag([id])
       setSelectedFolder("")
       setSelectedCategory("")
@@ -252,6 +254,9 @@ export default function NoteForm({
                 )}
               </div>
             </Field>
+            
+              <AddAnythingContent/>
+            
           </FieldGroup>
 
           <DialogFooter className="mt-2">

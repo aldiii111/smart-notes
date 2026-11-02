@@ -4,7 +4,7 @@ import { useNotes } from "@/hooks/useNotes";
 import NoteList from "@/components/notes/NoteList";
 import { useParams } from "react-router";
 
-export default function FolderPage() {
+function FolderPage() {
   const { id } = useParams()
   const { filteredNotes } = useSearch("folder", `${id}`);
   const navigate = useNavigate()
@@ -24,3 +24,5 @@ export default function FolderPage() {
     </div>
   );
 }
+
+export default FolderPage;
